@@ -22,7 +22,7 @@ class Room(models.Model):
     room_type = models.ForeignKey('Room_type', on_delete=models.CASCADE)
     
     room_price = models.IntegerField()
-    status = models.CharField(max_length=2, choices=status_list, default="NO")
+    status = models.CharField(max_length=2, choices=status_list, default="0")
 
 
 class Guest(models.Model):
@@ -36,8 +36,8 @@ class Guest(models.Model):
 class Order(models.Model):
     order_date = models.DateField(default=date.today)
     
-    room = models.ForeignKey('Room', on_delete=models.CASCADE, to_field='room_number')
-    guest = models.ForeignKey('Guest', on_delete=models.CASCADE, to_field='guest_c_id')
+    room = models.ForeignKey('Room', on_delete=models.CASCADE)
+    guest = models.ForeignKey('Guest', on_delete=models.CASCADE)
     
     is_reverse = models.BooleanField(default=False)
     reverse_date = models.DateField(blank=True, default=date.today)

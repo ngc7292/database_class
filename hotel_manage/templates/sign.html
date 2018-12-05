@@ -25,27 +25,25 @@
     <div class="myapp-login-logo-block  tpl-login-max">
         <div class="myapp-login-logo-text">
             <div class="myapp-login-logo-text">
-                干氏财团管理系统<span> Login</span> <i class="am-icon-skyatlas"></i>
+                干氏财团管理系统<span> Sign up</span> <i class="am-icon-skyatlas"></i>
                 
             </div>
         </div>
 
         <div class="login-font">
-            <a href="">Log In </a> or <a href="/sign"><span>Sign Up</span></a>
+            <a href="">sign up </a> or <a href="/login"><span>log in</span></a>
         </div>
         <div class="am-u-sm-10 login-am-center">
             <form class="am-form" method="post" action="">
                 {% csrf_token %}
                 <fieldset>
                     <div class="am-form-group">
-                        <input type="text" class="" placeholder="输入用户名" name="username">
+                        <input type="text" class="" id="doc-ipt-email-1" placeholder="输入用户名" name="username">
                     </div>
                     <div class="am-form-group">
                         <input type="password" class="" id="doc-ipt-pwd-1" placeholder="设置个密码吧" name="password">
                     </div>
-                    <div>
-                        <h2 style="color: #ffffff;align-content: center">{{ msg }}</h2>
-                    </div>
+                    <span>{{ msg }}</span>
                     <p><button type="submit" class="am-btn am-btn-default">登录</button></p>
                 </fieldset>
             </form>
