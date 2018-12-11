@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="assets/css/admin.css">
     <link rel="stylesheet" href="assets/css/app.css">
     <script src="assets/js/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
 </head>
 
 <body data-type="index">
@@ -43,7 +44,7 @@
             </ul>
         </div>
     </header>
-    
+
 
     <div class="tpl-page-container tpl-page-header-fixed">
         <div class="tpl-left-nav tpl-left-nav-hover">
@@ -53,13 +54,13 @@
             <div class="tpl-left-nav-list">
                 <ul class="tpl-left-nav-menu">
                     <li class="tpl-left-nav-item">
-                        <a href="index.html" class="nav-link active">
+                        <a href="" class="nav-link">
                             <i class="am-icon-home"></i>
                             <span>首页</span>
                         </a>
                     </li>
                     <li class="tpl-left-nav-item">
-                        <a href="check_in.html" class="nav-link tpl-left-nav-link-list">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>登记客房</span>
                             <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
@@ -78,11 +79,15 @@
                                     <i class="am-icon-angle-right"></i>
                                     <span>预定客房</span>
                                 </a>
+                                <a href="group_book.html" class="active">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span>团体预定</span>
+                                </a>
                             </li>
                         </ul>
                     </li>
                     <li class="tpl-left-nav-item">
-                        <a href="settle.html" class="nav-link tpl-left-nav-link-list">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>客户结账</span>
                             <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
@@ -93,7 +98,7 @@
                                     <i class="am-icon-angle-right"></i>
                                     <span>客户结账</span>
                                 </a>
-                                <a href="group_sttle.html">
+                                <a href="group_settle.html">
                                     <i class="am-icon-angle-right"></i>
                                     <span>团体结账</span>
                                 </a>
@@ -101,7 +106,7 @@
                         </ul>
                     </li>
                     <li class="tpl-left-nav-item">
-                        <a href="check_guest_info.html" class="nav-link tpl-left-nav-link-list">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>查询</span>
                             <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
@@ -122,7 +127,7 @@
 
                     <!--仅管理员-->
                     <li class="tpl-left-nav-item">
-                        <a href="change_price.html" class="nav-link tpl-left-nav-link-list">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>房间管理</span>
                             <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
@@ -154,61 +159,82 @@
                 </ul>
             </div>
         </div>
-        
+
 
 
         <div class="tpl-content-wrapper">
             <div class="tpl-content-page-title">
-                登记入住
+                团体预定登记
             </div>
             <ol class="am-breadcrumb">
-                <li><a href="" class="am-icon-home">首页</a></li>
-                <li><a href="#">登记入住</a></li>
+                <li><a href="ngc.html" class="am-icon-home">首页</a></li>
+                <li><a href="">团体预定登记</a></li>
             </ol>
             <div class="tpl-portlet-components">
                 <div class="portlet-title">
                     <div class="caption font-green bold">
-                        <span class="am-icon-code"></span> 表单
+                        <span class="am-icon-code"></span> 预定登记
                     </div>
                 </div>
 
                 <div class="tpl-block">
                     <div class="am-g">
                         <div class="tpl-form-body tpl-form-line">
-                            <form class="am-form tpl-form-line-form" action="">
+
+
+                            <form class="am-form tpl-form-line-form" id="group_book">
                                 <div class="am-form-group">
-                                    <label for="user-name" class="am-u-sm-3 am-form-label">客人姓名 <span class="tpl-form-line-small-title">Name</span></label>
+                                    <label for="user-name" class="am-u-sm-3 am-form-label">预定组织名称 <span class="tpl-form-line-small-title">Name</span></label>
                                     <div class="am-u-sm-9">
-                                        <input type="text" class="tpl-form-input" id="user-name" placeholder="请输入名字全称">
-                                        <small>请填写入住顾客姓名。</small>
+                                        <input type="text" class="tpl-form-input" id="org_name" placeholder="请输入名字全称" v-model="org_name" >
+                                        <small>请填写预定组织名称。</small>
+                                    </div>
+                                </div>
+
+                                <template v-for="member in members">
+
+                                    <div class="am-form-group">
+                                        <label class="am-u-sm-3 am-form-label">预定客人姓名 <span class="tpl-form-line-small-title">name</span></label>
+                                        <div class="am-u-sm-9">
+                                            <input type="text" class="am-form-field tpl-form-no-bg" placeholder="请输入预定者姓名" v-model="member.name"/>
+                                            <small>请填写预定者姓名</small>
+                                        </div>
+                                    </div>
+    
+                                    <div class="am-form-group">
+                                        <label class="am-u-sm-3 am-form-label">预定客人身份证编号 <span class="tpl-form-line-small-title">ID number</span></label>
+                                        <div class="am-u-sm-9">
+                                            <input type="text" class="am-form-field tpl-form-no-bg" placeholder="请输入13位身份证号" v-model="member.id_number"/>
+                                            <small>身份证必填</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="am-form-group" style="border-bottom: 3px;">
+                                        <label class="am-u-sm-3 am-form-label">预定客房编号<span class="tpl-form-line-small-title">Room number</span> </label>
+                                        <div class="am-u-sm-9" style="float: left;">
+                                            <input type="text" class="am-form-field tpl-form-no-bg" placeholder="请输入房间编号" v-model="member.room_number"/>
+                                            <small>备注：若预定成功，则会在当日14点至次日12点为该顾客预留房间</small>
+                                        </div>
+                                    </div>
+
+                                </template>
+                                <div class="am-form-group">
+                                    <div class="am-u-sm-9 am-u-sm-push-3">
+                                        <button type="button" class="am-btn am-btn-primary tpl-btn-bg-color-success" v-on:click="addmember">添加客人</button>
+                                        <button type="button" class="am-btn am-btn-primary tpl-btn-bg-color-success" v-on:click="popmember">删除客人</button>
                                     </div>
                                 </div>
 
                                 <div class="am-form-group">
-                                    <label class="am-u-sm-3 am-form-label">客人身份证号 <span class="tpl-form-line-small-title">ID number</span></label>
-                                    <div class="am-u-sm-9">
-                                        <input type="text" class="am-form-field tpl-form-no-bg" placeholder="请输入13位身份证号"/>
-                                        <small>身份证必填</small>
+                                    <label class="am-u-sm-3 am-form-label">日期<span class="tpl-form-line-small-title">date</span></label>
+                                    <div class="am-u-sm-4" style="float: left;">
+                                        <input type="date" class="am-form-field" placeholder="日期" v-model="date">
+                                        <small>备注：若预定时间于今日之前，则会预定失败</small>
                                     </div>
                                 </div>
 
                                 <div class="am-form-group">
-                                    <label class="am-u-sm-3 am-form-label">客房编号<span class="tpl-form-line-small-title">Room number</span></label>
-                                    <div class="am-u-sm-3" style="float: left;">
-                                        <input type="text" class="am-form-field tpl-form-no-bg" placeholder="请输入房间编号"/>
-                                        <small>房间号必填</small>
-                                    </div>
-                                </div>
-
-                                <div class="am-form-group">
-                                    <label class="am-u-sm-3 am-form-label"><span class="tpl-form-line-small-title">日期</span></label>
-                                    <div class="am-u-sm-3" style="float: left;">
-                                        <input type="text" class="am-icon-table am-form-field am-icon-calendar" placeholder="日期" data-am-datepicker="">
-                                    </div>
-                                </div>
-
-                                <div class="am-form-group">
-                                    <label class="am-u-sm-3 am-form-label"><span class="tpl-form-line-small-title">备注</span></label>
+                                    <label class="am-u-sm-3 am-form-label">备注<span class="tpl-form-line-small-title"></span></label>
                                     <div class="am-u-sm-9">
                                         <input type="text" placeholder="备注（可选 -_-! 反正不会被放到数据库里）">
                                     </div>
@@ -216,11 +242,12 @@
 
                                 <div class="am-form-group">
                                     <div class="am-u-sm-9 am-u-sm-push-3">
-                                        <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success" >提交</button>
+                                        <button type="button" class="am-btn am-btn-primary tpl-btn-bg-color-success" v-on:click="submit">提交</button>
                                     </div>
                                 </div>
 
                             </form>
+
 
                         </div>
                     </div>
@@ -229,12 +256,12 @@
             </div>
         </div>
     </div>
-
-
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/amazeui.min.js"></script>
     <script src="assets/js/iscroll.js"></script>
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/group_book.js"></script>
 </body>
 
 </html>
