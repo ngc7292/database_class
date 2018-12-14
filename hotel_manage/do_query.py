@@ -70,9 +70,12 @@ def get_index_data(is_admin):
             room_numbers.append(order_data['room_number'])
         total_live_room += 1
         total_money += Room.objects.get(id=order.room_id).room_price
-    
-    valid_room = total_room - total_live_room
-    live_percent = str(total_live_room/total_room*100).split(".")[0]+"%"
+    try:
+        valid_room = total_room - total_live_room
+        live_percent = str(total_live_room/total_room*100).split(".")[0]+"%"
+    except:
+        valid_room = "0"
+        live_percent = "0%"
     recv_data = {
         't_live': total_live_room,
         'live_percent': live_percent,
