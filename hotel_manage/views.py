@@ -137,27 +137,257 @@ def index(request):
 
 
 def settle(request):
+    '''
+    [查询]按钮功能
+    返回结账订单
+    requests
+    {
+        'name':'',
+        'id_number':'xxxx'
+    }
+    response
+    {
+        'id_number':'',
+        'name':'',
+        'order':[
+        {
+            'id':'',
+            'room_number':'',
+            'date':'',
+            'price':''
+        },
+        ]
+    }
+    :param request:
+    :return:
+    '''
     session = request.session
-    pass
+    if 'username' not in session:
+        return redirect('/index')
+    else:
+        if request.method == "GET":
+            return render(request, 'settle.html')
+        elif request.method == "POST":
+            response_data = {}
+            try:
+                #######  客户名与身份证号 前端提交的数据
+                guest_name = request.POST['name']
+                guest_id_number = request.POST['id_number']
+                #######
+                guest = Guest.objects.filter(guest_c_id = guest_id_number).first()
+                orders = Order.objects.filter(guest = guest)
+                response_data['id_number'] = guest_id_number
+                response_data['name'] = guest_name
+                response_data['order'] = []
+                for order in orders:
+                    info = {}
+                    info['id'] = order.id
+                    info['room_number'] = order.room.room_number
+                    info['data'] = str(order.order_date)
+                    info['price'] = order.room.room_price
+                    response_data['order'].append(info)
+                return JsonResponse(response_data)
+            except:
+                return None
 
 
-
-def group_check_in(request):
+def settle_finish(request):
+    '''
+    [结账]按钮功能    一个客户有多个订单就多次调用此函数
+    requests
+    {
+        'order_id':'xx',
+    response
+    {
+        'status':'xxx',
+        'msg':'xxxx'
+    }
+    :param request:
+    :return:
+    '''
     session = request.session
-    pass
-
-
-
-def group_settle(request):
-    session = request.session
-    pass
-
+    if 'username' not in session:
+        return redirect('/index')
+    else:
+        response_data = {}
+        try:
+            ####### 订单编号 前端提交的数据
+            order_id = request.POST['order_id']
+            #######
+            order = Order.objects.filter(id = order_id).first()
+        except:
+            response_data['status'] = 'error'
+            response_data['msg'] = "order doesn't exist"
+            return JsonResponse(response_data)
+        try:
+            #修改房间状态为空
+            order.room.status = '0'
+            order.room.save()
+            order.is_finish = True
+            order.save()
+            response_data['status'] = 'success'
+            response_data['msg'] = "order is finished"
+            return JsonResponse(response_data)
+        except:
+            response_data['status'] = 'error'
+            response_data['msg'] = "failed"
+            return JsonResponse(response_data)
 
 
 def group_book(request):
+    '''
+    团体预定
+    requests
+    {
+        'org_name':'xx',
+        'member':[{
+            'name':'',
+            'id_number':'',
+            'room_number':''
+        }
+        ...],
+        'date':''
+    }
+    response
+    {
+        'status':['seccuss'.'error'],
+        'msg':'xxx'
+    }
+    '''
     session = request.session
-    pass
+    if 'username' not in session:
+        return redirect('/index')
+    else:
+        if request.method == "GET":
+            return render(request, 'group_book.html')
+        elif request.method == "POST":
+            response_data = {}
+            try:
+                ####### 前端提交的数据
+                org_name = request.POST['org_name']
+                member = request.POST['member']
+                order_date = request.POST['date']
+                #######
+                for i in member:
+                    guest = add_guest(i['name'],i['id_number'])
+                    guest.update(is_group = True,group_name = org_name)
+                    if not check_room_status(i['room_number']):
+                        response_data['status'] = 'error'
+                        response_data['msg'] = 'A room has been lived'
+                        return JsonResponse(response_data)
+                    else:
+                        if create_order(i['name'],i['id_number'],i['room_number'],order_date):
+                            continue
+                        else:
+                            response_data['status'] = 'error'
+                            response_data['msg'] = 'Create orders failed'
+                            return JsonResponse(response_data)
+                response_data['status'] = 'success'
+                response_data['msg'] = "Group book succssed"
+                return JsonResponse(response_data)
+            except:
+                response_data['status'] = 'error'
+                response_data['msg'] = "Group book faied"
+                return JsonResponse(response_data)
 
+
+def group_settle(request):
+    '''
+    requests
+    {
+        'org_name':'xx',
+    }
+    response
+    {
+        'orders':[{
+            'id':'xx',
+            'id_number':'xxx',
+            'name':'xxx',
+            'room_number':'xx',
+            'date':'xxx',
+            'price':'xxx',
+    }
+    :param request:
+    :return:
+    '''
+    session = request.session
+    if 'username' not in session:
+        return redirect('/index')
+    else:
+        if request.method == "GET":
+            return render(request, 'settle.html')
+        elif request.method == "POST":
+            response_data = {}
+            response_data['order'] = []
+            try:
+                org_name = request.POST['org_name']
+                #团体里所有顾客的集合
+                guests = Guest.objects.filter(group_name = org_name)
+                for guest in guests:
+                    orders = Order.objects.fliter(guest = guest)
+                    for order in orders:
+                        info = {}
+                        info['id'] = order.id
+                        info['id_number'] = guest.guest_c_id
+                        info['name'] = guest.guest_name
+                        info['room_number'] = order.room.room_number
+                        info['data'] = str(order.order_date)
+                        info['price'] = order.room.room_price
+                        response_data['order'].append(info)
+                return JsonResponse(response_data)
+            except:
+                return None
+
+
+def group_settle_finish(request):
+    '''
+    requests
+    {
+        'order_ids':[id1,id2,……],
+    }
+    response
+    {
+        'status':'xxx',
+        'msg':'xxxx'
+    }
+    :param request:
+    :return:
+    '''
+    session = request.session
+    if 'username' not in session:
+        return redirect('/index')
+    else:
+        response_data = {}
+        try:
+            ####### 订单编号 前端提交的数据
+            order_ids = request.POST['order_id']
+            #######
+            order_list = []
+            for i in order_ids:
+                order = Order.objects.filter(id=i).first()
+                order_list.append(order_list)
+        except:
+            response_data['status'] = 'error'
+            response_data['msg'] = "order doesn't exist"
+            return JsonResponse(response_data)
+        try:
+            for order in order_list:
+                # 修改房间状态为空
+                order.room.status = '0'
+                order.room.save()
+                # 修改客户状态 退出团体
+                order.guest.is_group = False
+                order.guest.group_name = ''
+                order.guest.save()
+                order.is_finish = True
+                order.save()
+            response_data['status'] = 'success'
+            response_data['msg'] = "order is finished"
+            return JsonResponse(response_data)
+        except:
+            response_data['status'] = 'error'
+            response_data['msg'] = "failed"
+            return JsonResponse(response_data)
 
 
 def check_guest_info(request):
