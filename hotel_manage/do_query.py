@@ -115,7 +115,7 @@ def get_index_data(is_admin):
     return recv_data
 
 
-def check_room_status(room_number):
+def check_room_status(room_number, id_number):
     """
     获取房间状态（今日是否有人住在这个房间中）
     :param room_number: 房间编号
@@ -132,6 +132,9 @@ def check_room_status(room_number):
                 live_number += 1
             else:
                 continue
+        for guest in live_guest:
+            if guest.guest_c_id == id_number:
+                return False
         room_capcity = room.room_type.capacity
         if room_capcity > live_number:
             return True

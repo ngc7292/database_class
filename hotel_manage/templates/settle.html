@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="{% static "css/admin.css" %}">
     <link rel="stylesheet" href="{% static "css/app.css" %}">
     <script src="{% static "js/echarts.min.js" %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
 </head>
 
 <body data-type="index">
@@ -54,47 +55,43 @@
             <div class="tpl-left-nav-list">
                 <ul class="tpl-left-nav-menu">
                     <li class="tpl-left-nav-item">
-                        <a href="index.html" class="nav-link active">
+                        <a href="" class="nav-link" >
                             <i class="am-icon-home"></i>
                             <span>首页</span>
                         </a>
                     </li>
                     <li class="tpl-left-nav-item">
-                        <a href="check_in.html" class="nav-link tpl-left-nav-link-list">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>登记客房</span>
                             <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
                         </a>
                         <ul class="tpl-left-nav-sub-menu" style="display: block;">
                             <li>
-                                <a href="check_in.html">
+                                <a href="/check">
                                     <i class="am-icon-angle-right"></i>
-                                    <span>登记入住</span>
+                                    <span>登记入住 & 预定客房</span>
                                 </a>
-                                <a href="group_check_in.html">
+                                <a href="/group_check">
                                     <i class="am-icon-angle-right"></i>
-                                    <span>团体登记</span>
-                                </a>
-                                <a href="book_room.html">
-                                    <i class="am-icon-angle-right"></i>
-                                    <span>预定客房</span>
+                                    <span>团体登记 & 预定</span>
                                 </a>
                             </li>
                         </ul>
                     </li>
                     <li class="tpl-left-nav-item">
-                        <a href="settle.html" class="nav-link tpl-left-nav-link-list">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>客户结账</span>
                             <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
                         </a>
                         <ul class="tpl-left-nav-sub-menu" style="display: block;">
                             <li>
-                                <a href="settle.html">
+                                <a href="settle.html" class="active">
                                     <i class="am-icon-angle-right"></i>
                                     <span>客户结账</span>
                                 </a>
-                                <a href="group_sttle.html">
+                                <a href="group_settle.html">
                                     <i class="am-icon-angle-right"></i>
                                     <span>团体结账</span>
                                 </a>
@@ -102,7 +99,7 @@
                         </ul>
                     </li>
                     <li class="tpl-left-nav-item">
-                        <a href="check_guest_info.html" class="nav-link tpl-left-nav-link-list">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>查询</span>
                             <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
@@ -121,31 +118,14 @@
                         </ul>
                     </li>
 
-                    <!--仅管理员-->
+                    {% if is_admin %}
                     <li class="tpl-left-nav-item">
-                        <a href="change_price.html" class="nav-link tpl-left-nav-link-list">
+                        <a href="/admin" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>房间管理</span>
-                            <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
                         </a>
-                        <ul class="tpl-left-nav-sub-menu" style="display: block;">
-                            <li>
-                                <a href="chang_room.html">
-                                    <i class="am-icon-angle-right"></i>
-                                    <span>房间增删</span>
-                                </a>
-                                <a href="chang_room_type.html">
-                                    <i class="am-icon-angle-right"></i>
-                                    <span>更改房间类型</span>
-                                </a>
-                                <a href="change_price.html">
-                                    <i class="am-icon-angle-right"></i>
-                                    <span>更改房价</span>
-                                </a>
-                            </li>
-                        </ul>
                     </li>
-
+                    {% endif %}
                     <li class="tpl-left-nav-item">
                         <a href="satement.html" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-bar-chart"></i>
@@ -223,7 +203,7 @@
                                         <template v-for="order in orders">
                                             <tr>
                                                 <td>{{ order.id }}</td>
-                                                <td>{{ order.id_number}}</a></td>
+                                                <td>{{ order.id_number}}</td>
                                                 <td>{{ order.name }}</td>
                                                 <td>{{ order.room_number }}</td>
                                                 <td>{{ order.date }}</td>
@@ -247,11 +227,12 @@
     </div>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/amazeui.min.js"></script>
-    <script src="assets/js/iscroll.js"></script>
-    <script src="assets/js/app.js"></script>
-    <script src="assets/js/settle.js"></script>
+    <script src="{% static "js/jquery.min.js" %}"></script>
+    <script src="{% static "js/amazeui.min.js" %}"></script>
+    <script src="{% static "js/iscroll.js" %}"></script>
+    <script src="{% static "js/app.js" %}"></script>
+    <script src="{% static "js/settle.js" %}"></script>
+
 </body>
 
 </html>

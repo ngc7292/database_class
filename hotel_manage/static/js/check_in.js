@@ -15,14 +15,24 @@ var check_in = new Vue({
             }
             else
             {
-              var send_data=JSON.stringify(this.$data);
-              var url="http://localhost/group_book";
-              console.log(this);
-  
-              axios.get('https://ngc7292.github.io/').then(function(response){
-                  document.getElementById("check_in").reset();
-                  alert("success");
-              },function(error){
+              axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+              var url="http://127.0.0.1:8000/check/";
+                console.log(this.$data.name);
+              axios.post(url,{
+                  name:this.$data.name,
+                  id_number: this.$data.id_number,
+                  room_number: this.$data.room_number,
+                  date: this.$data.date
+              }).then(function(response){
+                  console.log(response);
+                  if(response.data.status == "success"){
+                      document.getElementById("check_in").reset();
+                      alert("succcess");
+                  }else {
+                      console.log(response.data.msg);
+                      alert(response.data.msg);
+                  }
+                  },function(error){
                   alert("error");
               });
             }
