@@ -48,6 +48,7 @@ var check_in = new Vue({
               response => {
                 if(response.data.status == "success"){
                     alert("success");
+                    window.location.href("http://127.0.0.1:8000/")
                 }
                 else{
                     alert("error");

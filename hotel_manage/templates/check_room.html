@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html>
 
@@ -10,21 +11,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp" />
-    <link rel="icon" type="image/png" href="assets/i/favicon.png">
-    <link rel="apple-touch-icon-precomposed" href="assets/i/app-icon72x72@2x.png">
+    <link rel="icon" type="image/png" href="{% static "i/favicon.png" %}">
+    <link rel="apple-touch-icon-precomposed" href="{% static "i/app-icon72x72@2x.png" %}">
     <meta name="apple-mobile-web-app-title" content="Amaze UI" />
-    <link rel="stylesheet" href="assets/css/amazeui.min.css" />
-    <link rel="stylesheet" href="assets/css/admin.css">
-    <link rel="stylesheet" href="assets/css/app.css">
-    <script src="assets/js/echarts.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <link rel="stylesheet" href="{% static "css/amazeui.min.css" %}" />
+    <link rel="stylesheet" href="{% static "css/admin.css" %}">
+    <link rel="stylesheet" href="{% static "css/app.css" %}">
+    <script src="{% static "js/echarts.min.js" %}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
 </head>
 
 <body data-type="index">
     <header class="am-topbar am-topbar-inverse admin-header">
         <div class="am-topbar-brand">
             <a href="javascript:;" class="tpl-logo">
-                <img src="assets/img/logo.png" alt="">
+                <img src="{% static "img/logo.png" %}" alt="">
             </a>
         </div>
         <div class="am-icon-list tpl-header-nav-hover-ico am-fl am-margin-right"></div>
@@ -34,7 +35,7 @@
                 <li class="am-dropdown" data-am-dropdown data-am-dropdown-toggle>
                     <a class="am-dropdown-toggle tpl-header-list-link" href="javascript:;">
                         <span class="tpl-header-list-user-nick">康哥</span>
-                        <span class="tpl-header-list-user-ico"> <img src="assets/img/user01.png"></span>
+                        <span class="tpl-header-list-user-ico"> <img src="{% static "img/user01.png" %}"></span>
                     </a>
                     <ul class="am-dropdown-content">
                         <li><a href="#"><span class="am-icon-power-off"></span> 退出</a></li>
@@ -44,9 +45,10 @@
             </ul>
         </div>
     </header>
-    
 
-<div class="tpl-page-container tpl-page-header-fixed">
+
+
+    <div class="tpl-page-container tpl-page-header-fixed">
         <div class="tpl-left-nav tpl-left-nav-hover">
             <div class="tpl-left-nav-title">
                 操作列表
@@ -54,47 +56,43 @@
             <div class="tpl-left-nav-list">
                 <ul class="tpl-left-nav-menu">
                     <li class="tpl-left-nav-item">
-                        <a href="index.html" class="nav-link active">
+                        <a href="/index/" class="nav-link active" >
                             <i class="am-icon-home"></i>
                             <span>首页</span>
                         </a>
                     </li>
                     <li class="tpl-left-nav-item">
-                        <a href="check_in.html" class="nav-link tpl-left-nav-link-list">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>登记客房</span>
                             <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
                         </a>
                         <ul class="tpl-left-nav-sub-menu" style="display: block;">
                             <li>
-                                <a href="check_in.html">
+                                <a href="/check/">
                                     <i class="am-icon-angle-right"></i>
-                                    <span>登记入住</span>
+                                    <span>登记入住 & 预定客房</span>
                                 </a>
-                                <a href="group_check_in.html">
+                                <a href="/group/">
                                     <i class="am-icon-angle-right"></i>
-                                    <span>团体登记</span>
-                                </a>
-                                <a href="book_room.html">
-                                    <i class="am-icon-angle-right"></i>
-                                    <span>预定客房</span>
+                                    <span>团体登记 & 预定</span>
                                 </a>
                             </li>
                         </ul>
                     </li>
                     <li class="tpl-left-nav-item">
-                        <a href="settle.html" class="nav-link tpl-left-nav-link-list">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>客户结账</span>
                             <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
                         </a>
                         <ul class="tpl-left-nav-sub-menu" style="display: block;">
                             <li>
-                                <a href="settle.html">
+                                <a href="/settle/">
                                     <i class="am-icon-angle-right"></i>
                                     <span>客户结账</span>
                                 </a>
-                                <a href="group_sttle.html">
+                                <a href="/group_settle/">
                                     <i class="am-icon-angle-right"></i>
                                     <span>团体结账</span>
                                 </a>
@@ -102,18 +100,18 @@
                         </ul>
                     </li>
                     <li class="tpl-left-nav-item">
-                        <a href="check_guest_info.html" class="nav-link tpl-left-nav-link-list">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>查询</span>
                             <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
                         </a>
                         <ul class="tpl-left-nav-sub-menu" style="display: block;">
                             <li>
-                                <a href="check_guest_info.html">
+                                <a href="/get_guest/">
                                     <i class="am-icon-angle-right"></i>
                                     <span>客户查询</span>
                                 </a>
-                                <a href="check_room.html">
+                                <a href="/check_room/">
                                     <i class="am-icon-angle-right"></i>
                                     <span>房间查询</span>
                                 </a>
@@ -121,89 +119,35 @@
                         </ul>
                     </li>
 
-                    <!--仅管理员-->
+                    {% if is_admin %}
                     <li class="tpl-left-nav-item">
-                        <a href="change_price.html" class="nav-link tpl-left-nav-link-list">
+                        <a href="/change_room/" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>房间管理</span>
-                            <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
-                        </a>
-                        <ul class="tpl-left-nav-sub-menu" style="display: block;">
-                            <li>
-                                <a href="chang_room.html">
-                                    <i class="am-icon-angle-right"></i>
-                                    <span>房间增删</span>
-                                </a>
-                                <a href="chang_room_type.html">
-                                    <i class="am-icon-angle-right"></i>
-                                    <span>更改房间类型</span>
-                                </a>
-                                <a href="change_price.html">
-                                    <i class="am-icon-angle-right"></i>
-                                    <span>更改房价</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="tpl-left-nav-item">
-                        <a href="satement.html" class="nav-link tpl-left-nav-link-list">
-                            <i class="am-icon-bar-chart"></i>
-                            <span>财务报表</span>
                         </a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
 
-
         
-        <div class="tpl-content-wrapper">
+                <div class="tpl-content-wrapper">
             <div class="tpl-content-page-title">
-                客房查询
+                个人结账
             </div>
             <ol class="am-breadcrumb">
                 <li><a href="" class="am-icon-home">首页</a></li>
-                <li><a href="#">客房查询</a></li>
+                <li><a href="#">个人结账</a></li>
             </ol>
             <div class="tpl-portlet-components">
                 <div class="portlet-title">
                     <div class="caption font-green bold">
-                        <span class="am-icon-code"></span> 客房查询
+                        <span class="am-icon-code"></span> 个人结账
                     </div>
                 </div>
 
-                <div class="tpl-block" id="check_room">
-                    <div class="am-g">
-                        <div class="am-u-md-2">
-                            <div class="am-input-group am-input-group-sm">
-                                <small>筛选选项</small>
-                            </div>
-                        </div>
-                        <div class="am-u-md-3">
-                            <div class="am-input-group am-input-group-sm">
-                                <input type="text" class="am-form-field" placeholder="请输入房间类型" v-model="filter.room_type">
-                            </div>
-                        </div>
-                        <div class="am-u-md-2">
-                            <div class="am-input-group am-input-group-sm">
-                                <input type="radio" name="doc-radio-1" v-model="filter.live_or_book" value='live' checked><small> 是否入住</small>
-                            </div>
-                        </div>
-                        <div class="am-u-md-2">
-                            <div class="am-input-group am-input-group-sm">
-                                <input type="radio" name="doc-radio-1" v-model="filter.live_or_book" value='book' checked ><small> 是否预定</small>
-                            </div>
-                        </div>
-                        <div class="am-u-sm-12 am-u-md-3">
-                            <div class="am-input-group am-input-group-sm">
-                                <input type="text" class="am-form-field" placeholder="请输入价格区间" v-model="filter.room_price">
-                                <span class="am-input-group-btn">
-                                    <button class="am-btn  am-btn-default am-btn-success tpl-am-btn-success am-icon-search" type="button" v-on:click="filter_room"></button>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="tpl-block" id="check_info">
 
                     <div class="am-g">
 
@@ -212,25 +156,27 @@
                                 <table class="am-table am-table-striped am-table-hover table-main">
                                     <thead>
                                         <tr>
+                                            <th class="table-title">id</th>
                                             <th class="table-title">房间号</th>
-                                            <th class="table-title">房间类型</th>
-                                            <th class="table-type">是否入住</th>
-                                            <th class="table-author am-hide-sm-only">是否预定</th>
-                                            <th class="table-date am-hide-sm-only">房间价格</th>
+                                            <th class="table-type">房间类型</th>
+                                            <th class="table-author am-hide-sm-only">房间价格</th>
+                                            <th class="table-date am-hide-sm-only">房间状态</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <template v-for="room in rooms">
-                                            <tr v-if="room.is_show">
+                                        {% for room in rooms %}
+                                            <tr>
+                                                <td>{{ room.id }}</td>
                                                 <td>{{ room.room_number }}</td>
-                                                <td>{{ room.room_type}}</a></td>
-                                                <td v-if="room.is_live">True</td>
-                                                <td v-else>False</td>
-                                                <td v-if="room.is_book">True</td>
-                                                <td v-else>False</td>
+                                                <td>{{ room.room_type }}</td>
                                                 <td>{{ room.room_price }}</td>
+                                                {% if room.status == True %}
+                                                    <td>已入住</td>
+                                                 {% else %}
+                                                    <td>未入住</td>
+                                                {% endif %}
                                             </tr>
-                                        </template>
+                                        {% endfor %}
                                     </tbody>
                                 </table>
                             </form>
@@ -241,12 +187,10 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/amazeui.min.js"></script>
-    <script src="assets/js/iscroll.js"></script>
-    <script src="assets/js/app.js"></script>
-    <script src="assets/js/check_room.js"></script>
+    <script src="{% static "js/jquery.min.js" %}"></script>
+    <script src="{% static "js/amazeui.min.js" %}"></script>
+    <script src="{% static "js/iscroll.js" %}"></script>
+    <script src="{% static "js/app.js" %}"></script>
 </body>
 
 </html>

@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{% static "css/admin.css" %}">
     <link rel="stylesheet" href="{% static "css/app.css" %}">
     <script src="{% static "js/echarts.min.js" %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
 </head>
 
 <body data-type="index">
@@ -47,6 +47,7 @@
     </header>
 
 
+
     <div class="tpl-page-container tpl-page-header-fixed">
         <div class="tpl-left-nav tpl-left-nav-hover">
             <div class="tpl-left-nav-title">
@@ -55,7 +56,7 @@
             <div class="tpl-left-nav-list">
                 <ul class="tpl-left-nav-menu">
                     <li class="tpl-left-nav-item">
-                        <a href="" class="nav-link" >
+                        <a href="/index/" class="nav-link active" >
                             <i class="am-icon-home"></i>
                             <span>首页</span>
                         </a>
@@ -68,11 +69,11 @@
                         </a>
                         <ul class="tpl-left-nav-sub-menu" style="display: block;">
                             <li>
-                                <a href="/check" class="active">
+                                <a href="/check/">
                                     <i class="am-icon-angle-right"></i>
                                     <span>登记入住 & 预定客房</span>
                                 </a>
-                                <a href="/group_check">
+                                <a href="/group/">
                                     <i class="am-icon-angle-right"></i>
                                     <span>团体登记 & 预定</span>
                                 </a>
@@ -87,11 +88,11 @@
                         </a>
                         <ul class="tpl-left-nav-sub-menu" style="display: block;">
                             <li>
-                                <a href="settle.html">
+                                <a href="/settle/">
                                     <i class="am-icon-angle-right"></i>
                                     <span>客户结账</span>
                                 </a>
-                                <a href="group_settle.html">
+                                <a href="/group_settle/">
                                     <i class="am-icon-angle-right"></i>
                                     <span>团体结账</span>
                                 </a>
@@ -106,11 +107,11 @@
                         </a>
                         <ul class="tpl-left-nav-sub-menu" style="display: block;">
                             <li>
-                                <a href="check_guest_info.html">
+                                <a href="/get_guest/">
                                     <i class="am-icon-angle-right"></i>
                                     <span>客户查询</span>
                                 </a>
-                                <a href="check_room.html">
+                                <a href="/check_room/">
                                     <i class="am-icon-angle-right"></i>
                                     <span>房间查询</span>
                                 </a>
@@ -120,18 +121,12 @@
 
                     {% if is_admin %}
                     <li class="tpl-left-nav-item">
-                        <a href="/admin" class="nav-link tpl-left-nav-link-list">
+                        <a href="/change_room/" class="nav-link tpl-left-nav-link-list">
                             <i class="am-icon-wpforms"></i>
                             <span>房间管理</span>
                         </a>
                     </li>
                     {% endif %}
-                    <li class="tpl-left-nav-item">
-                        <a href="satement.html" class="nav-link tpl-left-nav-link-list">
-                            <i class="am-icon-bar-chart"></i>
-                            <span>财务报表</span>
-                        </a>
-                    </li>
                 </ul>
             </div>
         </div>
@@ -233,11 +228,11 @@
         </div>
     </div>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/amazeui.min.js"></script>
-    <script src="assets/js/iscroll.js"></script>
-    <script src="assets/js/app.js"></script>
-    <script src="assets/js/group_book.js"></script>
+    <script src="{% static "js/jquery.min.js" %}"></script>
+    <script src="{% static "js/amazeui.min.js" %}"></script>
+    <script src="{% static "js/iscroll.js" %}"></script>
+    <script src="{% static "js/app.js" %}"></script>
+    <script src="{% static "js/group_book.js" %}"></script>
 </body>
 
 </html>

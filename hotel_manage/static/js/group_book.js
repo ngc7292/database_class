@@ -34,13 +34,17 @@ var group_book_method = new Vue({
             }
             else
             {
-              var send_data=JSON.stringify(this.$data);
-              var url="http://localhost/group_book";
-              console.log(this);
+              var url="http://127.0.0.1:8000/group/";
   
-              axios.get('https://ngc7292.github.io/').then(function(response){
-                  document.getElementById("group_book").reset();
-                  alert("success");
+              axios.post(url, this.$data).then(response => {
+                  if(response.data.status == "success")
+                  {
+                      alert("success");
+                  }
+                  else
+                  {
+                      alert("error")
+                  }
               },function(error){
                   alert("error");
               });

@@ -175,7 +175,7 @@ def create_order(guest_name, guest_c_id, room_number, order_date):
     """
     try:
         guest = add_guest(guest_name, guest_c_id)
-        if not check_room_status(room_number):
+        if not check_room_status(room_number,guest_c_id):
             return False
         else:
             room = Room.objects.get(room_number=room_number)

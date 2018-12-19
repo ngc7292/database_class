@@ -3,36 +3,54 @@ var check_in = new Vue({
   data: {
     org_name:'',
     show_table:false,
-    orders:[{
-      id:'1',
-      id_number:'xxxxxxxxxxxxxxxxxx',
-      name:'xxx',
-      room_number:'xxx',
-      date:'xxxx-xx-xx',
-      price:122
-    }]
+    orders:[]
   },
   methods:{
-        submit_guest:function(){
+submit_guest:function(){
             var send_data=JSON.stringify(this.$data);
-            var url="http://localhost/group_book";
-            axios.get('https://ngc7292.github.io/')
+            var url="http://127.0.0.1:8000/group_settle/";
+            axios.post(url,{
+                org_name:this.$data.org_name,
+            })
             .then(
               response => {
-                document.getElementById("settle-form").reset();
-                alert("success");
-                this.show_table=true;
+                if(response.data.status == "success") {
+                    console.log(response.data.orders);
+                    this.show_table = true;
+                    for(order in response.data.orders){
+                        this.orders.push(response.data.orders[order]);
+                    }
+                    alert("success");
+                }
+                else if(!response.data.msg){
+                    console.log(response);
+                    alert("no this guest")
+                }
+                else{
+                    alert("error")
+                }
             },function(error){
                 alert("error");
             });
         },
         submit_order:function(){
-            var send_data=JSON.stringify(this.$data);
-            var url="http://localhost/group_book";
-            axios.get('https://ngc7292.github.io/')
+            var send_data=[];
+            for(order in this.$data.orders)
+            {
+                send_data.push(this.$data.orders[order].id);
+            }
+            console.log(send_data);
+            var url="http://127.0.0.1:8000/group_settle_finish/";
+            axios.post(url, {order_id:send_data})
             .then(
               response => {
-                alert("success");
+                if(response.data.status == "success"){
+                    alert("success");
+                    window.location.href("http://127.0.0.1:8000/")
+                }
+                else{
+                    alert("error");
+                }
             },function(error){
                 alert("error");
             });

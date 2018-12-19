@@ -84,6 +84,7 @@ def sign(request):
         else:
             return redirect('/sign')
 
+
 @csrf_exempt
 def check(request):
     """
@@ -123,7 +124,7 @@ def check(request):
         finally:
             return JsonResponse(response_data)
 
-        
+
 def index(request):
     """
     index函数，渲染主页面
@@ -136,7 +137,6 @@ def index(request):
     else:
         is_admin = session['is_admin']
         return render(request, 'index.html', get_index_data(is_admin))
-
 
 
 @csrf_exempt
@@ -179,8 +179,8 @@ def settle(request):
                 guest_name = request_data['name']
                 guest_id_number = request_data['id_number']
                 #######
-                guest = Guest.objects.filter(guest_c_id = guest_id_number).first()
-                orders = Order.objects.filter(guest = guest)
+                guest = Guest.objects.filter(guest_c_id=guest_id_number).first()
+                orders = Order.objects.filter(guest=guest, is_finish=False)
                 response_data['id_number'] = guest_id_number
                 response_data['name'] = guest_name
                 response_data['orders'] = []
@@ -222,13 +222,13 @@ def settle_finish(request):
         response_data = {}
         request_data = json.loads(request.body)
         try:
-            orders = [Order.objects.get(id=order_id) for order_id in request_data['order_id']]
+            orders = [Order.objects.get(id=order_id, is_finish=False) for order_id in request_data['order_id']]
         except:
             response_data['status'] = 'error'
             response_data['msg'] = "order doesn't exist"
             return JsonResponse(response_data)
         try:
-            #修改房间状态为空
+            # 修改房间状态为空
             for order in orders:
                 order.room.status = '0'
                 order.room.save()
@@ -272,33 +272,36 @@ def group_book(request):
             return render(request, 'group_book.html')
         elif request.method == "POST":
             response_data = {}
-            try:
-                ####### 前端提交的数据
-                org_name = request.POST['org_name']
-                member = request.POST['member']
-                order_date = request.POST['date']
-                #######
-                for i in member:
-                    guest = add_guest(i['name'],i['id_number'])
-                    guest.update(is_group = True,group_name = org_name)
-                    if not check_room_status(i['room_number']):
-                        response_data['status'] = 'error'
-                        response_data['msg'] = 'A room has been lived'
-                        return JsonResponse(response_data)
+            request_data = json.loads(request.body)
+            
+            ####### 前端提交的数据
+            org_name = request_data['org_name']
+            member = request_data['members']
+            order_date = request_data['date']
+            #######
+            for i in member:
+                guest = add_guest(i['name'], i['id_number'])
+                guest.is_group = True
+                guest.group_name = org_name
+                guest.save()
+                if not check_room_status(i['room_number'], i['id_number']):
+                    response_data['status'] = 'error'
+                    response_data['msg'] = 'A room has been lived'
+                    return JsonResponse(response_data)
+                else:
+                    if create_order(i['name'], i['id_number'], i['room_number'], order_date):
+                        continue
                     else:
-                        if create_order(i['name'],i['id_number'],i['room_number'],order_date):
-                            continue
-                        else:
-                            response_data['status'] = 'error'
-                            response_data['msg'] = 'Create orders failed'
-                            return JsonResponse(response_data)
-                response_data['status'] = 'success'
-                response_data['msg'] = "Group book succssed"
-                return JsonResponse(response_data)
-            except:
-                response_data['status'] = 'error'
-                response_data['msg'] = "Group book faied"
-                return JsonResponse(response_data)
+                        response_data['status'] = 'error'
+                        response_data['msg'] = 'Create orders failed'
+                        return JsonResponse(response_data)
+            response_data['status'] = 'success'
+            response_data['msg'] = "Group book succssed"
+            return JsonResponse(response_data)
+            # except:
+            #     response_data['status'] = 'error'
+            #     response_data['msg'] = "Group book faied"
+            #     return JsonResponse(response_data)
 
 
 @csrf_exempt
@@ -326,28 +329,28 @@ def group_settle(request):
         return redirect('/index')
     else:
         if request.method == "GET":
-            return render(request, 'settle.html')
+            return render(request, 'group_settle.html')
         elif request.method == "POST":
             response_data = {}
-            response_data['order'] = []
-            try:
-                org_name = request.POST['org_name']
-                #团体里所有顾客的集合
-                guests = Guest.objects.filter(group_name = org_name)
-                for guest in guests:
-                    orders = Order.objects.fliter(guest = guest)
-                    for order in orders:
-                        info = {}
-                        info['id'] = order.id
-                        info['id_number'] = guest.guest_c_id
-                        info['name'] = guest.guest_name
-                        info['room_number'] = order.room.room_number
-                        info['data'] = str(order.order_date)
-                        info['price'] = order.room.room_price
-                        response_data['order'].append(info)
-                return JsonResponse(response_data)
-            except:
-                return None
+            response_data['orders'] = []
+            request_data = json.loads(request.body)
+            org_name = request_data['org_name']
+            # 团体里所有顾客的集合
+            guests = Guest.objects.filter(group_name=org_name)
+            for guest in guests:
+                orders = Order.objects.filter(guest=guest, is_finish=False)
+                response_data['status'] = 'success'
+                for order in orders:
+                    info = {}
+                    info['id'] = order.id
+                    info['id_number'] = guest.guest_c_id
+                    info['name'] = guest.guest_name
+                    info['room_number'] = order.room.room_number
+                    info['date'] = str(order.order_date)
+                    info['price'] = order.room.room_price
+                    response_data['orders'].append(info)
+            return JsonResponse(response_data)
+
 
 @csrf_exempt
 def group_settle_finish(request):
@@ -401,89 +404,158 @@ def group_settle_finish(request):
             return JsonResponse(response_data)
 
 
-def check_guest_info(request):
+@csrf_exempt
+def get_guest_info(request):
     session = request.session
-    pass
+    if 'username' not in session:
+        return redirect('')
+    elif request.method == "GET":
+        return render(request, 'check_guest_info.html')
+    elif request.method == "POST":
+        request_data = json.loads(request.body)
+        guest_name = request_data['name']
+        guest_c_id = request_data['id_number']
+        guest = Guest.objects.get(guest_c_id=guest_c_id)
+        orders = Order.objects.filter(guest=guest)
+        response_data = {}
+        response_data['status'] = 'success'
+        response_data['orders'] = []
+        for order in orders:
+            response_data['orders'].append({
+                'id': order.id,
+                'id_number': guest.guest_c_id,
+                'name': guest.guest_name,
+                'date': order.order_date,
+                'room_number': order.room.room_number,
+                'price': order.room.room_price
+            })
+        return JsonResponse(response_data)
 
 
+@csrf_exempt
 def check_room(request):
     '''
     :param request:
-    :return: {"cost": res_money}
+    :return: {"room": [{
+        'id':,
+        'number':,
+        'type':,
+        'price':,
+        'status':
+        }]}
     '''
-    session = request.session
-    if 'uesrname' not in session:
-        return redirect('/login')
-    else:
-        if request.method == "GET":
-            return render(request, 'index.html')
-        elif request.method == "POST":
-            try:
-                room_id = request.POST['room_id']
-                days = Order.objects.filter(room_id).count()
-                price = Room.objects.get(room_number=room_id).room_price
-                res_money = days * price
-
-                return render(request, 'check_room.html', {"cost": res_money})
-            except:
-                pass
-
-    pass
-
-
-# 结账报表:  用户名  入住时间  退房时间  入住天数  入住房间号  入住房间类型 房间单价 入住花费
-# lnylgk
-'''
-def check_report(request):
     session = request.session
     if 'username' not in session:
         return redirect('/login')
     else:
-        username = request.POST['username']
-        room_id = Order.objects.get()
-        in_time =
-        out_time =
-        days =
-        room_type =
-        price =
-        cost =
-        # 将所有信息返回之后，在数据库中删除该订单的所有信息
-        DelRoomRecord =
-        return render(request, '', {'username': username,
-                                    'room_id': room_id,
-                                    'in_time': in_time,
-                                    'out_time': out_time,
-                                    'days': days,
-                                    'room_type': room_type,
-                                    'price': price,
-                                    'cost': cost})
-'''
+        if request.method == "GET":
+            response_data = {}
+            response_data['rooms'] = []
+            try:
+                # 查询所有的房间
+                rooms = Room.objects.all()
+                for room in rooms:
+                    response_data['rooms'].append(
+                        {
+                            'id': room.id,
+                            'room_number': room.room_number,
+                            'room_type': room.room_type.room_type,
+                            'room_price': room.room_price,
+                            'room_status': room.status
+                        }
+                    )
+            except Exception as e:
+                print(e)
+                response_data['rooms'].append({
+                    'room_id': 'None',
+                    'room_number': 'None',
+                    'room_type': 'None',
+                    'room_price': 'None',
+                    'room_status': 'None'
+                })
+            finally:
+                return render(request, 'check_room.html', response_data)
 
 
+@csrf_exempt
 def change_room(request):
     '''
+    request{
+        'method':'change_price'/'change_type'/'add_room'/'del_room',
+        'param':{
+            'room_number':'',
+            'room_type':'',
+            'room_price':''
+        }
+        }
+    response{
+        'status':'success'/'error',
+        'msg':
+        }
     :param request:
     :return: none
     '''
-    sessio = request.session
-    if 'username' not in sessio:
+    session = request.session
+    if 'username' not in session:
         return redirect('/login')
     else:
-        username = request.POST['username']
-        if User.objects.filter(user_username=username).is_admin:
-            # 更改房价 根据房间类型
-            room_type = request.POST['room_type']
-            change_to_price = request.POST['change_to_price']
-            ChangeRoomPrice = Room.objects.filter(room_type=room_type).update(room_price=change_to_price)
-            # 更改房间类型
-            room_id = request.POST['room_id']
-            change_to_type = request.POST['change_to_type']
-            ChangeRoomType = Room.objects.filter(room_number=room_id).update(room_type=change_to_type)
-            # 增删客房
-            add_room_id = request.POST['add_room_id']
-            del_room_id = request.POST['del_room_id']
-            AddRoom = Room.objects.create(room_nuber=add_room_id)
-            DelRoom = Room.objects.filter(room_number=del_room_id).delete()
-
-        else:
-            return render(request, 'index.html', {'msg': 'you are not admin!'})
+        if request.method == "GET":
+            response_data={'rooms':[]}
+            rooms = Room.objects.all()
+            for room in rooms:
+                response_data['rooms'].append(
+                    {
+                        'id': room.id,
+                        'room_number': room.room_number,
+                        'room_type': room.room_type.room_type,
+                        'room_price': room.room_price,
+                        'room_status': room.status
+                    }
+                )
+            return render(request, 'change_room.html',response_data)
+        elif request.method == "POST":
+            response_data = {}
+            request_data = json.loads(request.body)
+            if request_data['method'] == 'change_price':
+                try:
+                    room = Room.objects.filter(room_number=
+                                               request_data['param']['room_number']).update(
+                        room_price=request_data['param']['room_price'])
+                except:
+                    response_data['status'] = 'error'
+                    response_data['msg'] = 'Change Price failed'
+                    return JsonResponse(response_data)
+                response_data['status'] = 'success'
+                response_data['msg'] = 'Change Price success'
+            elif request_data['method'] == 'change_type':
+                try:
+                    room_type = Room_type.objects.filter(room_type=request_data['param']['room_type']).first()
+                    room = Room.objects.filter(room_number=
+                                               request_data['param']['room_number']).update(room_type=room_type)
+                except:
+                    response_data['status'] = 'error'
+                    response_data['msg'] = 'Change Type failed'
+                    return JsonResponse(response_data)
+                response_data['status'] = 'success'
+                response_data['msg'] = 'Change Type success'
+            elif request_data['method'] == 'add_room':
+                try:
+                    room_type = Room_type.objects.filter(room_type=request_data['param']['room_type']).first()
+                    room = Room.objects.create(room_type=room_type, room_number=request_data['param']['room_number']
+                                               , room_price=request_data['param']['room_price'], status='0')
+                except:
+                    response_data['status'] = 'error'
+                    response_data['msg'] = 'Add Room failed'
+                    return JsonResponse(response_data)
+                response_data['status'] = 'success'
+                response_data['msg'] = 'Add Room success'
+            elif request_data['method'] == 'del_room':
+                try:
+                    room = Room.objects.filter(room_number=request_data['param']['room_number']).delete()
+                except:
+                    response_data['status'] = 'error'
+                    response_data['msg'] = 'Delete Room failed'
+                    return JsonResponse(response_data)
+                response_data['status'] = 'success'
+                response_data['msg'] = 'Delete Room success'
+            return JsonResponse(response_data)
